@@ -2,14 +2,13 @@ pipeline {
     agent any
     
     tools {
-        nodejs 'NodeJS-20'  // 🔧 CHANGED: Match your tool name
+        nodejs 'NodeJS-20'
     }
     
     environment {
         APP_NAME = 'jenkins-demo-app'
         BUILD_NUMBER_ENV = "${BUILD_NUMBER}"
         DEPLOY_ENV = 'staging'
-        // 🔥 ADDED: Dynamic port to prevent conflicts
         APP_PORT = "${3000 + BUILD_NUMBER.toInteger()}"
     }
     
@@ -30,7 +29,6 @@ pipeline {
         stage('Pre-Cleanup') {
             steps {
                 echo '🔥 Cleaning up previous processes...'
-                // 🔧 CHANGED: Better kill command
                 sh 'pkill -9 node || true'
                 sh 'sleep 3'
             }
@@ -55,15 +53,15 @@ pipeline {
         
         stage('Test') {
             when {
-                not { params.SKIP_TESTS }
+                not {
+                    equals expected: false, actual: params.SKIP_TESTS
+                }
             }
             steps {
                 echo "Running tests on port ${APP_PORT}..."
                 script {
-                    // 🔧 CHANGED: Use dynamic port
                     sh "PORT=${APP_PORT} nohup node app.js > app.log 2>&1 &"
                     sh 'sleep 5'
-                    // 🔧 CHANGED: Pass port to tests
                     sh "PORT=${APP_PORT} npm test"
                 }
             }

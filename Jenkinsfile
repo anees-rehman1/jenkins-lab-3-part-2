@@ -53,9 +53,7 @@ pipeline {
         
         stage('Test') {
             when {
-                not {
                     equals expected: false, actual: params.SKIP_TESTS
-                }
             }
             steps {
                 echo "Running tests on port ${APP_PORT}..."

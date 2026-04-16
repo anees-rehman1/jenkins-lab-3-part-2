@@ -8,7 +8,7 @@ pipeline {
     environment {
         APP_NAME = 'jenkins-demo-app'
         BUILD_NUMBER_ENV = "${BUILD_NUMBER}"
-        DEPLOY_ENV = 'staging'
+        
         APP_PORT = "${3000 + BUILD_NUMBER.toInteger()}"
     }
     
